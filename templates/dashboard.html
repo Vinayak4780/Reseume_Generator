@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Resume Builder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">AI Resume Builder</a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">Welcome, {{ user_email }}</span>
+                <a class="btn btn-outline-light btn-sm" href="/">Create New Resume</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h2>Your Resumes</h2>
+                
+                {% if resumes %}
+                <div class="row">
+                    {% for resume in resumes %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ resume.title }}</h5>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        Created: {{ resume.created_at.strftime('%B %d, %Y') }}<br>
+                                        Updated: {{ resume.updated_at.strftime('%B %d, %Y') }}
+                                    </small>
+                                </p>
+                                <div class="btn-group w-100" role="group">
+                                    <button class="btn btn-primary btn-sm" onclick="viewResume('{{ resume.id }}')">
+                                        View
+                                    </button>
+                                    <button class="btn btn-success btn-sm" onclick="downloadResume('{{ resume.id }}')">
+                                        Download PDF
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteResume('{{ resume.id }}')">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center mt-5">
+                    <h4>No resumes found</h4>
+                    <p>You haven't created any resumes yet.</p>
+                    <a href="/" class="btn btn-primary">Create Your First Resume</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Resume View Modal -->
+    <div class="modal fade" id="resumeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Resume Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="resumeContent">
+                    <!-- Resume content will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="downloadFromModal">Download PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const userEmail = '{{ user_email }}';
+        let currentResumeId = null;
+        let currentResumeData = null;
+
+        async function viewResume(resumeId) {
+            try {
+                const response = await fetch(`/resume/${resumeId}?user_email=${encodeURIComponent(userEmail)}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentResumeId = resumeId;
+                    currentResumeData = result.resume;
+                    
+                    // Generate HTML for resume
+                    const resumeHtml = generateResumeHTML(result.resume);
+                    document.getElementById('resumeContent').innerHTML = resumeHtml;
+                    
+                    // Show modal
+                    const modal = new bootstrap.Modal(document.getElementById('resumeModal'));
+                    modal.show();
+                } else {
+                    alert('Failed to load resume');
+                }
+            } catch (error) {
+                console.error('Error viewing resume:', error);
+                alert('An error occurred while loading the resume');
+            }
+        }
+
+        async function downloadResume(resumeId) {
+            try {
+                const response = await fetch(`/resume/${resumeId}?user_email=${encodeURIComponent(userEmail)}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Download PDF
+                    const pdfResponse = await fetch('/download-pdf', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(result.resume)
+                    });
+                    
+                    if (pdfResponse.ok) {
+                        const blob = await pdfResponse.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${result.resume.name.replace(/\s+/g, '_')}_resume.pdf`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    } else {
+                        alert('Failed to download PDF');
+                    }
+                } else {
+                    alert('Failed to load resume for download');
+                }
+            } catch (error) {
+                console.error('Error downloading resume:', error);
+                alert('An error occurred while downloading the resume');
+            }
+        }
+
+        async function deleteResume(resumeId) {
+            if (!confirm('Are you sure you want to delete this resume?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/resume/${resumeId}?user_email=${encodeURIComponent(userEmail)}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    location.reload(); // Refresh the page to update the list
+                } else {
+                    alert('Failed to delete resume');
+                }
+            } catch (error) {
+                console.error('Error deleting resume:', error);
+                alert('An error occurred while deleting the resume');
+            }
+        }
+
+        // Download from modal
+        document.getElementById('downloadFromModal').addEventListener('click', async () => {
+            if (currentResumeData) {
+                try {
+                    const response = await fetch('/download-pdf', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(currentResumeData)
+                    });
+                    
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${currentResumeData.name.replace(/\s+/g, '_')}_resume.pdf`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    } else {
+                        alert('Failed to download PDF');
+                    }
+                } catch (error) {
+                    console.error('Error downloading PDF:', error);
+                    alert('An error occurred while downloading the PDF');
+                }
+            }
+        });
+
+        // Resume HTML generation function (similar to the one in script.js)
+        function generateResumeHTML(data) {
+            return `
+                <div class="resume-content">
+                    <div class="resume-header">
+                        <h1 class="resume-name">${data.name}</h1>
+                        <div class="resume-contact">
+                            ${data.contact_info.email} | ${data.contact_info.phone}
+                        </div>
+                    </div>
+                    
+                    <div class="resume-section">
+                        <h2 class="resume-section-title">Professional Summary</h2>
+                        <div class="resume-summary">${data.summary}</div>
+                    </div>
+                    
+                    <div class="resume-section">
+                        <h2 class="resume-section-title">Education</h2>
+                        ${generateEducationHTML(data.education)}
+                    </div>
+                    
+                    <div class="resume-section">
+                        <h2 class="resume-section-title">Technical Skills</h2>
+                        ${generateSkillsHTML(data.skills)}
+                    </div>
+                    
+                    <div class="resume-section">
+                        <h2 class="resume-section-title">Projects</h2>
+                        ${generateProjectsHTML(data.projects)}
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateEducationHTML(education) {
+            if (!Array.isArray(education)) return '';
+            
+            return education.map(edu => `
+                <div class="education-item">
+                    <div class="education-degree">${edu.degree || ''}</div>
+                    <div class="education-details">
+                        ${edu.institution || ''} ${edu.year ? `(${edu.year})` : ''}
+                        ${edu.cgpa ? ` | CGPA: ${edu.cgpa}` : ''}
+                    </div>
+                    ${edu.details ? `<div class="education-details">${edu.details}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function generateSkillsHTML(skills) {
+            if (Array.isArray(skills)) {
+                return `<div class="skills-list">${skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}</div>`;
+            } else if (typeof skills === 'string') {
+                const skillsArray = skills.split(/[,;•]/).map(s => s.trim()).filter(s => s.length > 0);
+                return `<div class="skills-list">${skillsArray.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}</div>`;
+            }
+            return '<div>No skills listed</div>';
+        }
+
+        function generateProjectsHTML(projects) {
+            if (!Array.isArray(projects)) return '';
+            
+            return projects.map(project => `
+                <div class="project-item">
+                    <div class="project-title">${project.title || 'Untitled Project'}</div>
+                    ${project.duration ? `<div class="project-details">Duration: ${project.duration}</div>` : ''}
+                    <div class="project-description">${project.description || ''}</div>
+                    ${project.technologies ? `<div class="project-details"><strong>Technologies:</strong> ${project.technologies}</div>` : ''}
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

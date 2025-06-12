@@ -1,0 +1,266 @@
+/* Custom CSS for AI Resume Builder */
+
+:root {
+    --primary-color: #007bff;
+    --success-color: #28a745;
+    --info-color: #17a2b8;
+    --warning-color: #ffc107;
+    --secondary-color: #6c757d;
+    --dark-color: #343a40;
+    --light-bg: #f8f9fa;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.form-section {
+    background: white;
+    padding: 2rem;
+    overflow-y: auto;
+    max-height: 100vh;
+}
+
+.preview-section {
+    background: var(--light-bg);
+    padding: 2rem;
+    border-left: 1px solid #dee2e6;
+}
+
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.preview-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.preview-content {
+    flex: 1;
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+}
+
+.placeholder-content {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+.card-header {
+    border-bottom: none;
+    font-weight: 600;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border: none;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #0056b3, #004085);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Resume Preview Styles */
+.resume-content {
+    font-family: 'Times New Roman', serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+.resume-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #007bff;
+}
+
+.resume-name {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.resume-contact {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.resume-section {
+    margin-bottom: 2rem;
+}
+
+.resume-section-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #2c3e50;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.resume-summary {
+    font-size: 1.1rem;
+    text-align: justify;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+}
+
+.education-item, .project-item {
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 3px solid #007bff;
+}
+
+.education-degree, .project-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+.education-details, .project-details {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.skill-tag {
+    background: #e9ecef;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 991.98px) {
+    .form-section, .preview-section {
+        padding: 1rem;
+    }
+    
+    .preview-section {
+        border-left: none;
+        border-top: 1px solid #dee2e6;
+    }
+    
+    .preview-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .resume-name {
+        font-size: 2rem;
+    }
+    
+    .form-container {
+        max-width: 100%;
+    }
+}
+
+/* Animation for form validation */
+.was-validated .form-control:invalid,
+.was-validated .form-select:invalid {
+    border-color: #dc3545;
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 20%, 40%, 60%, 80% {
+        transform: translateX(-5px);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(5px);
+    }
+}
+
+/* Success animation */
+.success-animation {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

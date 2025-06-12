@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Builder</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row min-vh-100">
+            <!-- Form Section -->
+            <div class="col-lg-6 form-section">
+                <div class="form-container">                    <div class="text-center mb-4">
+                        <h1 class="display-4 text-primary">
+                            <i class="fas fa-file-alt me-3"></i>AI Resume Builder
+                        </h1>
+                        <p class="lead text-muted">Create professional resumes with AI assistance</p>
+                        <div class="mb-3">
+                            <a href="/login" class="btn btn-outline-primary btn-sm me-2">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login
+                            </a>
+                            <a href="/dashboard" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                            </a>
+                        </div>
+                    </div>
+
+                    <form id="resumeForm" class="needs-validation" novalidate>
+                        <!-- Personal Information -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="fas fa-user me-2"></i>Personal Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="name" class="form-label">Full Name *</label>
+                                        <input type="text" class="form-control" id="name" name="name" required>
+                                        <div class="invalid-feedback">Please provide your full name.</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="email" class="form-label">Email Address *</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                        <div class="invalid-feedback">Please provide a valid email.</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="phone" class="form-label">Phone Number *</label>
+                                        <input type="text" class="form-control" id="phone" name="phone" required>
+                                        <div class="invalid-feedback">Please provide your phone number.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Career Information -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0"><i class="fas fa-briefcase me-2"></i>Career Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="experience_level" class="form-label">Experience Level *</label>
+                                        <select class="form-select" id="experience_level" name="experience_level" required>
+                                            <option value="">Select experience level</option>
+                                            <option value="entry">Entry Level (0-2 years)</option>
+                                            <option value="mid">Mid Level (2-5 years)</option>
+                                            <option value="senior">Senior Level (5+ years)</option>
+                                            <option value="executive">Executive Level</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select your experience level.</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="target_role" class="form-label">Target Role/Position *</label>
+                                        <input type="text" class="form-control" id="target_role" name="target_role" 
+                                               placeholder="e.g., Software Engineer, Data Analyst" required>
+                                        <div class="invalid-feedback">Please specify your target role.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Skills -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Skills & Technologies</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="skills" class="form-label">Skills *</label>
+                                    <textarea class="form-control" id="skills" name="skills" rows="4" required
+                                              placeholder="List your technical skills, programming languages, tools, frameworks, etc. You can separate them with commas or write in detail.&#10;&#10;Example: Python, JavaScript, React, Node.js, SQL, AWS, Docker, Git"></textarea>
+                                    <div class="form-text">Include technical skills, programming languages, frameworks, tools, and soft skills.</div>
+                                    <div class="invalid-feedback">Please list your skills.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Education -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-warning text-dark">
+                                <h5 class="mb-0"><i class="fas fa-graduation-cap me-2"></i>Education</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="education" class="form-label">Educational Background *</label>
+                                    <textarea class="form-control" id="education" name="education" rows="4" required
+                                              placeholder="Include your degree(s), institution(s), graduation year, CGPA/GPA, and any relevant coursework or achievements.&#10;&#10;Example: Bachelor of Technology in Computer Science, XYZ University, 2023, CGPA: 8.5/10"></textarea>
+                                    <div class="form-text">Include degree, institution, year, CGPA/GPA, and relevant details.</div>
+                                    <div class="invalid-feedback">Please provide your educational background.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Projects -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-secondary text-white">
+                                <h5 class="mb-0"><i class="fas fa-project-diagram me-2"></i>Projects</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="projects" class="form-label">Project Details *</label>
+                                    <textarea class="form-control" id="projects" name="projects" rows="6" required
+                                              placeholder="Describe your projects in detail including:&#10;- Project name and brief description&#10;- Technologies and tools used&#10;- Your role and responsibilities&#10;- Key achievements and impact&#10;- Duration (if applicable)&#10;&#10;You can include multiple projects."></textarea>
+                                    <div class="form-text">Describe your projects with technologies used, your role, and achievements.</div>
+                                    <div class="invalid-feedback">Please describe your projects.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Additional Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="additional_info" class="form-label">Additional Information (Optional)</label>
+                                    <textarea class="form-control" id="additional_info" name="additional_info" rows="3"
+                                              placeholder="Include certifications, awards, languages, volunteer work, publications, or any other relevant information."></textarea>
+                                    <div class="form-text">Certifications, awards, languages, volunteer work, etc.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="generateBtn">
+                                <i class="fas fa-magic me-2"></i>Generate Resume
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="col-lg-6 preview-section">
+                <div class="preview-container">
+                    <div class="preview-header">
+                        <h3><i class="fas fa-eye me-2"></i>Resume Preview</h3>
+                        <div class="preview-actions" id="previewActions" style="display: none;">
+                            <button class="btn btn-success me-2" id="downloadPdfBtn">
+                                <i class="fas fa-download me-2"></i>Download PDF
+                            </button>
+                            <button class="btn btn-outline-secondary" id="editBtn">
+                                <i class="fas fa-edit me-2"></i>Edit
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-content" id="previewContent">
+                        <div class="placeholder-content">
+                            <div class="text-center">
+                                <i class="fas fa-file-alt fa-5x text-muted mb-3"></i>
+                                <h4 class="text-muted">Your resume will appear here</h4>
+                                <p class="text-muted">Fill out the form and click "Generate Resume" to see your professional resume</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center p-4">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5>Generating Your Resume...</h5>
+                    <p class="text-muted">Our AI is crafting your professional resume. This may take a few moments.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/script.js"></script>
+</body>
+</html>
